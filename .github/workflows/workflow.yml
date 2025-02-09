@@ -9,32 +9,35 @@ jobs:
       - name: Get Code
         uses: actions/checkout@v3
 
-      - name: Install Chrome
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y google-chrome-stable
-
-      - name: Install Chrome WebDriver
-        uses: nanasess/setup-chromedriver@v2
-        with:
-          chromeapp: chrome
-
-      - name: Run Chrome WebDriver
-        run: |
-          export DISPLAY=:99
-          chromedriver --url-base=/wd/hub &
-          sudo Xvfb -ac :99 -screen 0 1280x1024x24 > /dev/null 2>&1 & # optional
-
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.x'
       
+      - name: Install system dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y wget unzip
+
+    - name: Install Chrome
+      run: |
+        wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
+        echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" | sudo tee /etc/apt/sources.list.d/google-chrome.list
+        sudo apt-get update
+        sudo apt-get install -y google-chrome-stable
+
+    - name: Install ChromeDriver
+      run: |
+        CHROME_VERSION=$(google-chrome --version | awk '{print $3}' | cut -d '.' -f 1)
+        CHROMEDRIVER_VERSION=$(curl -s https://chromedriver.storage.googleapis.com/LATEST_RELEASE_${CHROME_VERSION})
+        wget -q -O /tmp/chromedriver.zip https://chromedriver.storage.googleapis.com/${CHROMEDRIVER_VERSION}/chromedriver_linux64.zip
+        sudo unzip /tmp/chromedriver.zip -d /usr/local/bin/
+        sudo chmod +x /usr/local/bin/chromedriver
+      
       - name: Install dependencies
         run: |
-          python -m pip install --upgrade pip
-          pip install robotframework
-          pip install robotframework-seleniumlibrary
-
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+      
       - name: Execute tests
         run: robot testes.robot
