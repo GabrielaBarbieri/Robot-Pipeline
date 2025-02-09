@@ -15,11 +15,11 @@ jobs:
           sudo apt-get install -y google-chrome-stable
 
       - name: Install Chrome WebDriver
+        uses: nanasess/setup-chromedriver@v2
         run: |
-          CHROME_VERSION=$(google-chrome --version | awk '{print $3}')
-          wget -q https://chromedriver.storage.googleapis.com/$CHROME_VERSION/chromedriver_linux64.zip
-          unzip chromedriver_linux64.zip
-          sudo mv chromedriver /usr/local/bin/
+          export DISPLAY=:99
+          chromedriver --url-base=/wd/hub &
+          sudo Xvfb -ac :99 -screen 0 1280x1024x24 > /dev/null 2>&1 & # optional
 
       - name: Set up Python
         uses: actions/setup-python@v4
