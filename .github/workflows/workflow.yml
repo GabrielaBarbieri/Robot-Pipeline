@@ -23,4 +23,7 @@ jobs:
           pip install -r requirements.txt
 
       - name: Execute tests
-        run: robot testes.robot
+        run: |
+        google-chrome --user-data-dir=/tmp/chrome-profile --headless --disable-gpu --remote-debugging-port=9222 &
+        robot testes.robot
+        pkill chrome
