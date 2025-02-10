@@ -24,6 +24,5 @@ jobs:
 
       - name: Execute tests
         run: |
-          pkill chrome
           robot testes.robot
         
