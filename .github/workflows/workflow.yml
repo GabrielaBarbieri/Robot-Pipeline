@@ -24,7 +24,6 @@ jobs:
 
       - name: Execute tests
         run: |
-          USER_DATA_DIR=$(mktemp -d -t chrome-XXXXXX)
-          google-chrome --user-data-dir=$USER_DATA_DIR --headless --disable-gpu --remote-debugging-port=9222 &
-          robot testes.robot
           pkill chrome
+          robot testes.robot
+        
