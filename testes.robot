@@ -3,5 +3,5 @@ Library   SeleniumLibrary
 
 
 *** Test Cases ***
-1.Verify url
-    Log To Console    1+1
+1.Hello World
+    Log To Console   Hello World!
